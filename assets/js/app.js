@@ -1,93 +1,121 @@
-const projectsList = document.getElementById("projects-list");
-const tagFilters = document.getElementById("tag-filters");
+(function () {
+  const projectsList = document.getElementById("projects-list");
+  const tagFilters = document.getElementById("tag-filters");
 
-let activeTag = "All";
+  if (!projectsList || !tagFilters || !Array.isArray(projects)) {
+    return;
+  }
 
-function getAllTags() {
-  const tags = new Set();
+  let activeTag = "All";
 
-  projects.forEach(p => {
-    p.tags.forEach(tag => tags.add(tag));
-  });
+  function getAllTags() {
+    const tagsSet = new Set();
 
-  return ["All", ...tags];
-}
+    projects.forEach((project) => {
+      if (Array.isArray(project.tags)) {
+        project.tags.forEach((tag) => tagsSet.add(tag));
+      }
+    });
 
-function renderTagFilters() {
-  const tags = getAllTags();
+    return ["All", ...Array.from(tagsSet).sort()];
+  }
 
-  tags.forEach(tag => {
+  function createTagButton(tag) {
     const button = document.createElement("button");
-
-    button.textContent = tag;
+    button.type = "button";
     button.className = "tag-button";
+    button.textContent = tag;
 
-    button.onclick = () => {
+    if (tag === activeTag) {
+      button.classList.add("active");
+    }
+
+    button.addEventListener("click", function () {
       activeTag = tag;
+      renderTagFilters();
       renderProjects();
-    };
+    });
 
-    tagFilters.appendChild(button);
-  });
-}
+    return button;
+  }
 
-function renderProjects() {
+  function renderTagFilters() {
+    const tags = getAllTags();
+    tagFilters.innerHTML = "";
 
-  projectsList.innerHTML = "";
+    tags.forEach((tag) => {
+      tagFilters.appendChild(createTagButton(tag));
+    });
+  }
 
-  const filtered =
-    activeTag === "All"
-      ? projects
-      : projects.filter(p => p.tags.includes(activeTag));
-
-  filtered.forEach(project => {
-
-    const card = document.createElement("article");
-    card.className = "project-card";
+  function createProjectCard(project) {
+    const article = document.createElement("article");
+    article.className = "project-card";
 
     const title = document.createElement("h3");
     title.textContent = project.name;
 
-    const desc = document.createElement("p");
-    desc.textContent = project.description;
+    const description = document.createElement("p");
+    description.textContent = project.description;
 
-    const tags = document.createElement("div");
-    tags.className = "project-tags";
+    article.appendChild(title);
+    article.appendChild(description);
 
-    project.tags.forEach(tag => {
-      const span = document.createElement("span");
-      span.className = "tag";
-      span.textContent = tag;
-      tags.appendChild(span);
-    });
+    if (Array.isArray(project.tags) && project.tags.length > 0) {
+      const tagsContainer = document.createElement("div");
+      tagsContainer.className = "project-tags";
+
+      project.tags.forEach((tag) => {
+        const tagElement = document.createElement("span");
+        tagElement.className = "tag";
+        tagElement.textContent = tag;
+        tagsContainer.appendChild(tagElement);
+      });
+
+      article.appendChild(tagsContainer);
+    }
 
     const links = document.createElement("div");
     links.className = "project-links";
 
-    const repo = document.createElement("a");
-    repo.href = project.repoUrl;
-    repo.textContent = "Repositorio";
-    repo.target = "_blank";
-
-    links.appendChild(repo);
-
-    if (project.demoUrl) {
-      const demo = document.createElement("a");
-      demo.href = project.demoUrl;
-      demo.textContent = "Demo";
-      demo.target = "_blank";
-      links.appendChild(demo);
+    if (project.repoUrl) {
+      const repoLink = document.createElement("a");
+      repoLink.href = project.repoUrl;
+      repoLink.target = "_blank";
+      repoLink.rel = "noopener noreferrer";
+      repoLink.textContent = "Repositorio";
+      links.appendChild(repoLink);
     }
 
-    card.appendChild(title);
-    card.appendChild(desc);
-    card.appendChild(tags);
-    card.appendChild(links);
+    if (project.demoUrl) {
+      const demoLink = document.createElement("a");
+      demoLink.href = project.demoUrl;
+      demoLink.target = "_blank";
+      demoLink.rel = "noopener noreferrer";
+      demoLink.textContent = "Demo";
+      links.appendChild(demoLink);
+    }
 
-    projectsList.appendChild(card);
+    article.appendChild(links);
 
-  });
-}
+    return article;
+  }
 
-renderTagFilters();
-renderProjects();
+  function renderProjects() {
+    projectsList.innerHTML = "";
+
+    const filteredProjects =
+      activeTag === "All"
+        ? projects
+        : projects.filter((project) => {
+            return Array.isArray(project.tags) && project.tags.includes(activeTag);
+          });
+
+    filteredProjects.forEach((project) => {
+      projectsList.appendChild(createProjectCard(project));
+    });
+  }
+
+  renderTagFilters();
+  renderProjects();
+})();
