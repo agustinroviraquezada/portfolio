@@ -1,49 +1,93 @@
-(function () {
-  const projectsList = document.getElementById("projects-list");
+const projectsList = document.getElementById("projects-list");
+const tagFilters = document.getElementById("tag-filters");
 
-  if (!projectsList || !Array.isArray(projects)) {
-    return;
-  }
+let activeTag = "All";
 
-  function createProjectCard(project) {
-    const article = document.createElement("article");
-    article.className = "project-card";
+function getAllTags() {
+  const tags = new Set();
+
+  projects.forEach(p => {
+    p.tags.forEach(tag => tags.add(tag));
+  });
+
+  return ["All", ...tags];
+}
+
+function renderTagFilters() {
+  const tags = getAllTags();
+
+  tags.forEach(tag => {
+    const button = document.createElement("button");
+
+    button.textContent = tag;
+    button.className = "tag-button";
+
+    button.onclick = () => {
+      activeTag = tag;
+      renderProjects();
+    };
+
+    tagFilters.appendChild(button);
+  });
+}
+
+function renderProjects() {
+
+  projectsList.innerHTML = "";
+
+  const filtered =
+    activeTag === "All"
+      ? projects
+      : projects.filter(p => p.tags.includes(activeTag));
+
+  filtered.forEach(project => {
+
+    const card = document.createElement("article");
+    card.className = "project-card";
 
     const title = document.createElement("h3");
     title.textContent = project.name;
 
-    const description = document.createElement("p");
-    description.textContent = project.description;
+    const desc = document.createElement("p");
+    desc.textContent = project.description;
+
+    const tags = document.createElement("div");
+    tags.className = "project-tags";
+
+    project.tags.forEach(tag => {
+      const span = document.createElement("span");
+      span.className = "tag";
+      span.textContent = tag;
+      tags.appendChild(span);
+    });
 
     const links = document.createElement("div");
     links.className = "project-links";
 
-    if (project.repoUrl) {
-      const repoLink = document.createElement("a");
-      repoLink.href = project.repoUrl;
-      repoLink.target = "_blank";
-      repoLink.rel = "noopener noreferrer";
-      repoLink.textContent = "Repositorio";
-      links.appendChild(repoLink);
-    }
+    const repo = document.createElement("a");
+    repo.href = project.repoUrl;
+    repo.textContent = "Repositorio";
+    repo.target = "_blank";
+
+    links.appendChild(repo);
 
     if (project.demoUrl) {
-      const demoLink = document.createElement("a");
-      demoLink.href = project.demoUrl;
-      demoLink.target = "_blank";
-      demoLink.rel = "noopener noreferrer";
-      demoLink.textContent = "Demo";
-      links.appendChild(demoLink);
+      const demo = document.createElement("a");
+      demo.href = project.demoUrl;
+      demo.textContent = "Demo";
+      demo.target = "_blank";
+      links.appendChild(demo);
     }
 
-    article.appendChild(title);
-    article.appendChild(description);
-    article.appendChild(links);
+    card.appendChild(title);
+    card.appendChild(desc);
+    card.appendChild(tags);
+    card.appendChild(links);
 
-    return article;
-  }
+    projectsList.appendChild(card);
 
-  projects.forEach((project) => {
-    projectsList.appendChild(createProjectCard(project));
   });
-})();
+}
+
+renderTagFilters();
+renderProjects();

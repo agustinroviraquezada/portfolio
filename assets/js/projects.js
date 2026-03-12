@@ -1,20 +1,23 @@
 const projects = [
   {
-    name: "Dashboard de Ventas",
-    description: "Aplicación web para visualizar métricas comerciales con filtros y gráficos.",
-    repoUrl: "https://github.com/tuusuario/dashboard-ventas",
-    demoUrl: "https://tuusuario.github.io/dashboard-ventas/"
+    name: "Sales Dashboard",
+    description: "Dashboard para visualizar métricas comerciales.",
+    repoUrl: "https://github.com/agustinroviraquezada/sales-dashboard",
+    demoUrl: "",
+    tags: ["JavaScript", "Dashboard", "Data"]
   },
   {
-    name: "Gestor de Tareas",
-    description: "Proyecto simple para organizar tareas con interfaz responsive y almacenamiento local.",
-    repoUrl: "https://github.com/tuusuario/gestor-tareas",
-    demoUrl: "https://tuusuario.github.io/gestor-tareas/"
+    name: "Task Manager",
+    description: "Aplicación web para gestión de tareas.",
+    repoUrl: "https://github.com/agustinroviraquezada/task-manager",
+    demoUrl: "",
+    tags: ["JavaScript", "Frontend"]
   },
   {
-    name: "API Cliente Demo",
-    description: "Ejemplo de consumo de API REST con JavaScript puro y renderizado dinámico.",
-    repoUrl: "https://github.com/tuusuario/api-cliente-demo",
-    demoUrl: ""
+    name: "API Client",
+    description: "Cliente web para consumir APIs REST.",
+    repoUrl: "https://github.com/agustinroviraquezada/api-client",
+    demoUrl: "",
+    tags: ["JavaScript", "API"]
   }
 ];
