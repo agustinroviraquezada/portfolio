@@ -3,61 +3,94 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi Portfolio</title>
-  <meta name="description" content="Portfolio personal con proyectos y repositorios" />
+  <title>Portfolio | Agustín Rovira Quezada</title>
+  <meta
+    name="description"
+    content="Portfolio personal con proyectos, repositorios y perfil profesional."
+  />
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
   <header class="hero">
     <div class="container">
-      <h1>Tu Nombre</h1>
+      <p class="eyebrow">Portfolio profesional</p>
+      <h1>Agustín Rovira Quezada</h1>
       <p class="subtitle">
-        Desarrollador/a | Tecnologías | Enfoque profesional
+        Desarrollador | Automatización | Integración de datos | Soluciones web
       </p>
+
       <p class="intro">
-        Bienvenido/a a mi portfolio. Aquí encontrarás una selección de proyectos,
-        demos y repositorios que muestran mi experiencia y forma de trabajar.
+        Bienvenido a mi portfolio. Aquí encontrarás una selección de proyectos y
+        repositorios que reflejan mi experiencia construyendo soluciones
+        prácticas, mantenibles y orientadas a negocio.
       </p>
 
       <div class="hero-links">
-        <a href="https://github.com/tuusuario" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="https://www.linkedin.com/in/tuusuario" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://github.com/agustinroviraquezada" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
       </div>
     </div>
   </header>
 
   <main class="container">
-    <section class="section about">
-      <h2>Sobre mí</h2>
+    <section class="section">
+      <div class="section-header">
+        <h2>Sobre mí</h2>
+      </div>
 
-      <p>
-        Soy desarrollador con experiencia en desarrollo de software,
-        automatización y creación de herramientas orientadas a datos.
-        Me enfoco en construir soluciones simples, mantenibles y orientadas
-        a resolver problemas reales.
-      </p>
+      <div class="profile-card">
+        <p>
+          Soy un perfil técnico orientado al desarrollo de herramientas internas,
+          automatización de procesos y construcción de soluciones web simples,
+          útiles y fáciles de mantener. Me interesa especialmente trabajar en
+          proyectos donde la tecnología ayude a mejorar la eficiencia, la
+          visibilidad de la información y la experiencia de usuario.
+        </p>
 
-      <p>
-        Tecnologías principales:
-        JavaScript, Python, APIs REST, automatización y visualización de datos.
-      </p>
+        <p>
+          Tengo experiencia trabajando con aplicaciones web, integración con
+          APIs, procesamiento de datos y organización de proyectos de forma
+          clara y escalable. En este portfolio muestro ejemplos prácticos de mi
+          forma de trabajar, priorizando código legible, soluciones mantenibles
+          y enfoque orientado a resultados.
+        </p>
+      </div>
     </section>
 
     <section class="section">
       <div class="section-header">
         <h2>Proyectos</h2>
-        <p>Una selección de repositorios y trabajos destacados.</p>
+        <p>Filtra por texto o por tecnología/tema usando las tags.</p>
       </div>
 
-      <div id="tag-filters" class="tag-filters"></div>
+      <div class="filters-card">
+        <div class="search-box">
+          <label for="search-input" class="label">Buscar proyectos</label>
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Buscar por nombre, descripción o tag"
+          />
+        </div>
 
+        <div>
+          <p class="label">Tags</p>
+          <div id="tags-filter" class="tags-filter"></div>
+        </div>
+
+        <div class="filter-actions">
+          <button id="clear-filters-btn" type="button">Limpiar filtros</button>
+        </div>
+      </div>
+
+      <div id="results-info" class="results-info"></div>
       <div id="projects-list" class="projects-grid"></div>
     </section>
   </main>
 
   <footer class="footer">
     <div class="container">
-      <p>© 2026 Tu Nombre</p>
+      <p>© 2026 Agustín Rovira Quezada</p>
     </div>
   </footer>
 

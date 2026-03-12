@@ -1,51 +1,93 @@
 (function () {
   const projectsList = document.getElementById("projects-list");
-  const tagFilters = document.getElementById("tag-filters");
+  const searchInput = document.getElementById("search-input");
+  const tagsFilter = document.getElementById("tags-filter");
+  const clearFiltersBtn = document.getElementById("clear-filters-btn");
+  const resultsInfo = document.getElementById("results-info");
 
-  if (!projectsList || !tagFilters || !Array.isArray(projects)) {
+  if (
+    !projectsList ||
+    !searchInput ||
+    !tagsFilter ||
+    !clearFiltersBtn ||
+    !resultsInfo ||
+    !Array.isArray(projects)
+  ) {
     return;
   }
 
-  let activeTag = "All";
+  let selectedTag = "";
+  let searchTerm = "";
 
-  function getAllTags() {
-    const tagsSet = new Set();
+  function normalizeText(value) {
+    return String(value || "").trim().toLowerCase();
+  }
 
-    projects.forEach((project) => {
+  function getAllTags(items) {
+    const tags = [];
+
+    items.forEach(function (project) {
       if (Array.isArray(project.tags)) {
-        project.tags.forEach((tag) => tagsSet.add(tag));
+        project.tags.forEach(function (tag) {
+          if (!tags.includes(tag)) {
+            tags.push(tag);
+          }
+        });
       }
     });
 
-    return ["All", ...Array.from(tagsSet).sort()];
+    return tags.sort(function (a, b) {
+      return a.localeCompare(b);
+    });
   }
 
-  function createTagButton(tag) {
+  function projectMatches(project, term, tag) {
+    const normalizedTerm = normalizeText(term);
+    const normalizedTag = normalizeText(tag);
+
+    const matchesTag =
+      !normalizedTag ||
+      (Array.isArray(project.tags) &&
+        project.tags.some(function (projectTag) {
+          return normalizeText(projectTag) === normalizedTag;
+        }));
+
+    const searchableText = [
+      project.name,
+      project.description,
+      Array.isArray(project.tags) ? project.tags.join(" ") : ""
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    const matchesSearch =
+      !normalizedTerm || searchableText.includes(normalizedTerm);
+
+    return matchesTag && matchesSearch;
+  }
+
+  function createLink(url, text) {
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = text;
+    return link;
+  }
+
+  function createTagElement(tag) {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "tag-button";
+    button.className = "project-tag";
     button.textContent = tag;
 
-    if (tag === activeTag) {
-      button.classList.add("active");
-    }
-
     button.addEventListener("click", function () {
-      activeTag = tag;
+      selectedTag = selectedTag === tag ? "" : tag;
       renderTagFilters();
       renderProjects();
     });
 
     return button;
-  }
-
-  function renderTagFilters() {
-    const tags = getAllTags();
-    tagFilters.innerHTML = "";
-
-    tags.forEach((tag) => {
-      tagFilters.appendChild(createTagButton(tag));
-    });
   }
 
   function createProjectCard(project) {
@@ -58,63 +100,102 @@
     const description = document.createElement("p");
     description.textContent = project.description;
 
-    article.appendChild(title);
-    article.appendChild(description);
+    const tagsContainer = document.createElement("div");
+    tagsContainer.className = "project-tags";
 
-    if (Array.isArray(project.tags) && project.tags.length > 0) {
-      const tagsContainer = document.createElement("div");
-      tagsContainer.className = "project-tags";
-
-      project.tags.forEach((tag) => {
-        const tagElement = document.createElement("span");
-        tagElement.className = "tag";
-        tagElement.textContent = tag;
-        tagsContainer.appendChild(tagElement);
+    if (Array.isArray(project.tags)) {
+      project.tags.forEach(function (tag) {
+        tagsContainer.appendChild(createTagElement(tag));
       });
-
-      article.appendChild(tagsContainer);
     }
 
     const links = document.createElement("div");
     links.className = "project-links";
 
     if (project.repoUrl) {
-      const repoLink = document.createElement("a");
-      repoLink.href = project.repoUrl;
-      repoLink.target = "_blank";
-      repoLink.rel = "noopener noreferrer";
-      repoLink.textContent = "Repositorio";
-      links.appendChild(repoLink);
+      links.appendChild(createLink(project.repoUrl, "Repositorio"));
     }
 
     if (project.demoUrl) {
-      const demoLink = document.createElement("a");
-      demoLink.href = project.demoUrl;
-      demoLink.target = "_blank";
-      demoLink.rel = "noopener noreferrer";
-      demoLink.textContent = "Demo";
-      links.appendChild(demoLink);
+      links.appendChild(createLink(project.demoUrl, "Demo"));
     }
 
+    article.appendChild(title);
+    article.appendChild(description);
+    article.appendChild(tagsContainer);
     article.appendChild(links);
 
     return article;
   }
 
-  function renderProjects() {
-    projectsList.innerHTML = "";
+  function renderTagFilters() {
+    const allTags = getAllTags(projects);
+    tagsFilter.innerHTML = "";
 
-    const filteredProjects =
-      activeTag === "All"
-        ? projects
-        : projects.filter((project) => {
-            return Array.isArray(project.tags) && project.tags.includes(activeTag);
-          });
+    allTags.forEach(function (tag) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "tag-button";
+      button.textContent = tag;
 
-    filteredProjects.forEach((project) => {
-      projectsList.appendChild(createProjectCard(project));
+      if (normalizeText(selectedTag) === normalizeText(tag)) {
+        button.classList.add("active");
+      }
+
+      button.addEventListener("click", function () {
+        selectedTag = selectedTag === tag ? "" : tag;
+        renderTagFilters();
+        renderProjects();
+      });
+
+      tagsFilter.appendChild(button);
     });
   }
+
+  function renderProjects() {
+    const filteredProjects = projects.filter(function (project) {
+      return projectMatches(project, searchTerm, selectedTag);
+    });
+
+    projectsList.innerHTML = "";
+
+    if (filteredProjects.length === 0) {
+      const emptyState = document.createElement("div");
+      emptyState.className = "empty-state";
+      emptyState.textContent = "No se han encontrado proyectos con esos filtros.";
+      projectsList.appendChild(emptyState);
+    } else {
+      filteredProjects.forEach(function (project) {
+        projectsList.appendChild(createProjectCard(project));
+      });
+    }
+
+    const filters = [];
+    if (searchTerm.trim()) {
+      filters.push('texto: "' + searchTerm.trim() + '"');
+    }
+    if (selectedTag) {
+      filters.push('tag: "' + selectedTag + '"');
+    }
+
+    resultsInfo.textContent =
+      filteredProjects.length +
+      " proyecto(s) mostrado(s)" +
+      (filters.length ? " | Filtros activos: " + filters.join(" · ") : "");
+  }
+
+  searchInput.addEventListener("input", function (event) {
+    searchTerm = event.target.value || "";
+    renderProjects();
+  });
+
+  clearFiltersBtn.addEventListener("click", function () {
+    selectedTag = "";
+    searchTerm = "";
+    searchInput.value = "";
+    renderTagFilters();
+    renderProjects();
+  });
 
   renderTagFilters();
   renderProjects();
