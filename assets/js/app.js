@@ -117,7 +117,7 @@
     }
 
     if (project.demoUrl) {
-      links.appendChild(createLink(project.demoUrl, "Demo"));
+      links.appendChild(createLink(project.demoUrl, "View"));
     }
 
     article.appendChild(title);
