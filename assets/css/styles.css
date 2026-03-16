@@ -271,6 +271,11 @@ input {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.project-links a:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
 .empty-state {
   grid-column: 1 / -1;
   background: rgba(30, 41, 59, 0.85);
