@@ -10,7 +10,7 @@ const projects = [
     name: "Clinical Risk Prediction for Heart Disease",
     description: "Machine learning project focused on predicting heart disease risk from clinical variables, combining exploratory data analysis, statistical testing, feature engineering, classification modeling, cross-validation, and external validation",
     repoUrl: "https://github.com/agustinroviraquezada/Clinical-Risk-Prediction-for-Heart--Disease",
-    demoUrl: "",
+    demoUrl: "https://agustinroviraquezada.github.io/Clinical-Risk-Prediction-for-Heart--Disease/test.html",
     tags: ["Regression", "EDA", "Python"]
   }
 ];
