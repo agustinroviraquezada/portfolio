@@ -116,8 +116,12 @@
       links.appendChild(createLink(project.repoUrl, "Repositorio"));
     }
 
+    if (project.readmeUrl) {
+      links.appendChild(createLink(project.readmeUrl, "README"));
+    }
+
     if (project.demoUrl) {
-      links.appendChild(createLink(project.demoUrl, "View"));
+      links.appendChild(createLink(project.demoUrl, "Demo"));
     }
 
     article.appendChild(title);
